@@ -46,15 +46,6 @@ clean-bin: ## Clean installed tools
 	$(info $(_bullet) Cleaning <bin>)
 	rm -rf bin/
 
-git-dirty: ## Check for uncommited changes
-	$(info $(_bullet) Checking for uncommited changes)
-	git status --porcelain
-	git diff --quiet --exit-code
-
-git-hooks: ## Configure git hooks
-	$(info $(_bullet) Configuring git hooks)
-	git config core.hooksPath .githooks
-
 _bullet := $(shell printf "\033[34;1m▶\033[0m")
 
 endif
