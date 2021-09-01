@@ -19,7 +19,7 @@ $(GOFUMPT): $(BIN)
 
 $(GOLANGCILINT): $(BIN)
 	$(info $(_bullet) Installing <golangci-lint>)
-	GOBIN=$(BIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v$(GOLANGCILINT_VERSION)
+	GOBIN=$(BIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCILINT_VERSION)
 
 clean: clean-go
 
