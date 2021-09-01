@@ -2,26 +2,24 @@ ifndef _include_go_mk
 _include_go_mk = 1
 
 include makefiles/shared.mk
-include makefiles/gobin.mk
 
 GO ?= go
 FORMAT_FILES ?= .
 
 GOFUMPT := bin/gofumpt
+GOFUMPT_VERSION ?= v0.1.1
 
 GOLANGCILINT := bin/golangci-lint
-GOLANGCILINT_VERSION ?= 1.31.0
+GOLANGCILINT_VERSION ?= v1.31.0
 GOLANGCILINT_CONCURRENCY ?= 16
 
-$(GOFUMPT): $(GOBIN)
+$(GOFUMPT): $(BIN)
 	$(info $(_bullet) Installing <gofumpt>)
-	@mkdir -p bin
-	GOBIN=bin $(GOBIN) mvdan.cc/gofumpt
+	GOBIN=$(BIN) $(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
 
-$(GOLANGCILINT): $(GOBIN)
+$(GOLANGCILINT): $(BIN)
 	$(info $(_bullet) Installing <golangci-lint>)
-	@mkdir -p bin
-	GOBIN=bin $(GOBIN) github.com/golangci/golangci-lint/cmd/golangci-lint@v$(GOLANGCILINT_VERSION)
+	GOBIN=$(BIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v$(GOLANGCILINT_VERSION)
 
 clean: clean-go
 

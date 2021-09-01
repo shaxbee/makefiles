@@ -2,6 +2,16 @@ ifndef _include_shared_mk
 _include_shared_mk := 1
 
 OS ?= $(shell uname -s | tr [:upper:] [:lower:])
+ARCH ?= $(shell uname -m)
+
+ifeq ($(ARCH),x86_64)
+	ARCH = amd64
+endif
+
+BIN = $(abspath bin)
+
+$(BIN):
+	@mkdir -p $(BIN)
 
 .PHONY: help clean deps vendor generate format lint test test-coverage integration-test build bootrap deploy run dev debug
 

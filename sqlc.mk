@@ -1,16 +1,14 @@
 ifndef include_sqlc_mk
 _include_sqlc_mk := 1
 
-include makefiles/shared.mk
+include makefiles/go.mk
 
-SQLC := bin/sqlc
-SQLC_VERSION ?= 1.5.0
+SQLC := $(abspath bin/sqlc)
+SQLC_VERSION ?= v1.7.0
 
-$(SQLC):
+$(SQLC): $(BIN)
 	$(info $(_bullet) Installing <sqlc>)
-	@mkdir -p bin
-	curl -sSfL https://github.com/kyleconroy/sqlc/releases/download/v$(SQLC_VERSION)/sqlc-v$(SQLC_VERSION)-$(OS)-amd64.tar.gz | tar -C bin -xz
-	chmod u+x $(SQLC)
+	GOBIN=$(BIN) go install github.com/kyleconroy/sqlc/cmd/sqlc@$(SQLC_VERSION)
 
 .PHONY: generate generate-sqlc
 

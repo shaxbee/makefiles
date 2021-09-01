@@ -3,13 +3,12 @@ _include_kubectl_mk := 1
 
 include makefiles/shared.mk
 
-KUBECTL := bin/kubectl
-KUBECTL_VERSION ?= 1.17.11
+KUBECTL := $(BIN)/kubectl
+KUBECTL_VERSION ?= v1.21.4
 
-$(KUBECTL):
+$(KUBECTL): $(BIN)
 	$(info $(_bullet) Installing <kubectl>)
-	@mkdir -p bin
-	curl -sSfL https://storage.googleapis.com/kubernetes-release/release/v$(KUBECTL_VERSION)/bin/$(OS)/amd64/kubectl -o $(KUBECTL)
+	curl -sSfL https://storage.googleapis.com/kubernetes-release/release/$(KUBECTL_VERSION)/bin/$(OS)/amd64/kubectl -o $(KUBECTL)
 	chmod u+x $(KUBECTL)
 
 endif

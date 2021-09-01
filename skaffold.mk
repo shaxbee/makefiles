@@ -4,13 +4,12 @@ _include_skaffold_mk := 1
 include makefiles/shared.mk
 include makefiles/kubectl.mk
 
-SKAFFOLD := bin/skaffold
-SKAFFOLD_VERSION ?= 1.16.0
+SKAFFOLD := $(BIN)/skaffold
+SKAFFOLD_VERSION ?= 1.20.0
 
-$(SKAFFOLD):
+$(SKAFFOLD): $(BIN)
 	$(info $(_bullet) Installing <skaffold>)
-	@mkdir -p bin
-	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-amd64 -o $(SKAFFOLD)
+	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-$(ARCH) -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
 
 deploy: deploy-skaffold
@@ -18,7 +17,7 @@ deploy: deploy-skaffold
 .PHONY: clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold
 
 clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: $(SKAFFOLD) $(KUBECTL)
-clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := $(shell pwd)/bin:$(PATH)
+clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := $(BIN):$(PATH)
 
 clean-skaffold: ## Clean Skaffold
 	$(info $(_bullet) Cleaning <skaffold>)
