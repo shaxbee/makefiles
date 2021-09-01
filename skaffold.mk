@@ -5,7 +5,7 @@ include makefiles/shared.mk
 include makefiles/kubectl.mk
 
 SKAFFOLD := $(BIN)/skaffold
-SKAFFOLD_VERSION ?= 1.20.0
+SKAFFOLD_VERSION ?= 1.30.0
 
 $(SKAFFOLD): $(BIN)
 	$(info $(_bullet) Installing <skaffold>)

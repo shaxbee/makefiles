@@ -9,7 +9,7 @@ OPENAPI_OUTPUT ?= pkg/api
 OPENAPI_PACKAGE_NAME ?= api
 
 OPENAPIGENERATORCLI := $(dir $(_openapi_mk_path))scripts/openapi-generator-cli
-OPENAPIGENERATORCLI_VERSION ?= 4.3.1
+OPENAPIGENERATORCLI_VERSION ?= 5.2.1
 
 lint: lint-openapi
 
@@ -28,7 +28,7 @@ generate-openapi: ## Generate OpenAPI code
 	$(OPENAPIGENERATORCLI) generate \
 		--input-spec $(OPENAPI_SPEC) \
 		--output $(OPENAPI_OUTPUT) \
-		--generator-name go-experimental \
+		--generator-name go \
 		--package-name=$(OPENAPI_PACKAGE_NAME) \
 		--additional-properties withGoCodegenComment \
 		--import-mappings=uuid.UUID=github.com/google/uuid --type-mappings=UUID=uuid.UUID
