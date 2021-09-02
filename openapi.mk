@@ -4,8 +4,8 @@ _openapi_mk_path := $(lastword $(MAKEFILE_LIST))
 
 include makefiles/shared.mk
 
-OPENAPI_SPEC ?= api/api.yaml
-OPENAPI_OUTPUT ?= pkg/api
+OPENAPI_SPEC ?= api-spec/api.yaml
+OPENAPI_OUTPUT ?= api
 OPENAPI_PACKAGE_NAME ?= api
 
 OPENAPIGENERATORCLI := $(dir $(_openapi_mk_path))scripts/openapi-generator-cli
