@@ -13,11 +13,11 @@ GOLANGCILINT := bin/golangci-lint
 GOLANGCILINT_VERSION ?= v1.42.0
 GOLANGCILINT_CONCURRENCY ?= 16
 
-$(GOFUMPT): $(BIN)
+$(GOFUMPT): | $(BIN)
 	$(info $(_bullet) Installing <gofumpt>)
 	GOBIN=$(BIN) $(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
 
-$(GOLANGCILINT): $(BIN)
+$(GOLANGCILINT): | $(BIN)
 	$(info $(_bullet) Installing <golangci-lint>)
 	GOBIN=$(BIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCILINT_VERSION)
 

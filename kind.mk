@@ -13,7 +13,7 @@ KIND_HOST_PORT ?= 80
 
 BOOTSTRAP_CONTEXT := kind-$(KIND_CLUSTER_NAME)
 
-$(KIND): $(BIN)
+$(KIND): | $(BIN)
 	$(info $(_bullet) Installing <kind>)
 	curl -sSfL https://kind.sigs.k8s.io/dl/$(KIND_VERSION)/kind-$(OS)-$(ARCH) -o $(KIND)
 	chmod u+x $(KIND)

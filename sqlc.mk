@@ -6,7 +6,7 @@ include makefiles/go.mk
 SQLC := $(abspath bin/sqlc)
 SQLC_VERSION ?= v1.7.0
 
-$(SQLC): $(BIN)
+$(SQLC): | $(BIN)
 	$(info $(_bullet) Installing <sqlc>)
 	GOBIN=$(BIN) go install github.com/kyleconroy/sqlc/cmd/sqlc@$(SQLC_VERSION)
 
