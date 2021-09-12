@@ -7,7 +7,7 @@ include makefiles/kubectl.mk
 SKAFFOLD := $(BIN)/skaffold
 SKAFFOLD_VERSION ?= 1.30.0
 
-$(SKAFFOLD): $(BIN)
+$(SKAFFOLD): | $(BIN)
 	$(info $(_bullet) Installing <skaffold>)
 	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-$(ARCH) -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
