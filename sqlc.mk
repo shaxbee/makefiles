@@ -4,7 +4,7 @@ _include_sqlc_mk := 1
 include makefiles/go.mk
 
 SQLC := bin/sqlc
-SQLC_VERSION ?= v1.7.0
+SQLC_VERSION ?= v1.10.0
 
 $(SQLC): $(BIN)
 	$(info $(_bullet) Installing <sqlc>)
