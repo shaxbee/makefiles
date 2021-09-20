@@ -8,10 +8,10 @@ ifeq ($(ARCH),x86_64)
 	ARCH = amd64
 endif
 
-BIN = $(abspath bin)
+BUILD ?= .build
 
-$(BIN):
-	@mkdir -p $(BIN)
+$(BUILD):
+	@mkdir -p $(BUILD)
 
 .PHONY: help clean deps vendor generate format lint test test-coverage integration-test build bootrap deploy run dev debug
 
@@ -20,7 +20,7 @@ all: deps generate format lint test build
 help: ## Help
 	@cat $(sort $(MAKEFILE_LIST)) | grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' | sort
 
-clean: clean-bin ## Clean targets
+clean: clean-build ## Clean targets
 
 deps: ## Download dependencies
 
@@ -50,11 +50,11 @@ dev: ## Run in development mode
 
 debug: ## Run in debug mode
 
-.PHONY: clean-bin git-dirty git-hooks
+.PHONY: clean-build git-dirty git-hooks
 
-clean-bin: ## Clean installed tools
-	$(info $(_bullet) Cleaning <bin>)
-	rm -rf bin/
+clean-build: ## Clean build tools
+	$(info $(_bullet) Cleaning <build>)
+	rm -rf $(BUILD_BIN)
 
 _bullet := $(shell printf "\033[34;1m▶\033[0m")
 

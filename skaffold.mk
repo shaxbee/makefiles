@@ -4,11 +4,13 @@ _include_skaffold_mk := 1
 include makefiles/shared.mk
 include makefiles/kubectl.mk
 
-SKAFFOLD := $(BIN)/skaffold
 SKAFFOLD_VERSION ?= 1.30.0
+SKAFFOLD_ROOT := $(BUILD)/skaffold-$(SKAFFOLD_VERSION)
+SKAFFOLD := $(SKAFFOLD_ROOT)/skaffold
 
-$(SKAFFOLD): $(BIN)
+$(SKAFFOLD):
 	$(info $(_bullet) Installing <skaffold>)
+	@mkdir -p $(SKAFFOLD_ROOT)
 	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-$(ARCH) -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
 
@@ -17,31 +19,31 @@ deploy: deploy-skaffold
 .PHONY: clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold
 
 clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: $(SKAFFOLD) $(KUBECTL)
-clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := $(BIN):$(PATH)
+clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := "$(SKAFFOLD_ROOT):$(KUBECTL_ROOT):$(PATH)"
 
 clean-skaffold: ## Clean Skaffold
 	$(info $(_bullet) Cleaning <skaffold>)
 	! kubectl config current-context &>/dev/null || \
-	$(SKAFFOLD) delete
+	skaffold delete
 
 build-skaffold: ## Build artifacts with Skaffold
 	$(info $(_bullet) Building artifacts with <skaffold>)
-	$(SKAFFOLD) build
+	skaffold build
 
 deploy-skaffold: build-skaffold ## Deploy artifacts with Skaffold
 	$(info $(_bullet) Deploying with <skaffold>)
-	$(SKAFFOLD) build -q | $(SKAFFOLD) deploy --force --build-artifacts -
+	skaffold build -q | $(SKAFFOLD) deploy --force --build-artifacts -
 
 run-skaffold: ## Run with Skaffold
 	$(info $(_bullet) Running stack with <skaffold>)
-	$(SKAFFOLD) run --force
+	skaffold run --force
 
 dev-skaffold: ## Run in development mode with Skaffold
 	$(info $(_bullet) Running stack in development mode with <skaffold>)
-	$(SKAFFOLD) dev --force --port-forward
+	skaffold dev --force --port-forward
 
 debug-skaffold: ## Run in debugging mode with Skaffold
 	$(info $(_bullet) Running stack in debugging mode with <skaffold>)
-	$(SKAFFOLD) debug --force --port-forward
+	skaffold debug --force --port-forward
 
 endif

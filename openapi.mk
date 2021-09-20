@@ -17,13 +17,13 @@ generate: generate-openapi
 
 .PHONY: lint-openapi generate-openapi
 
-lint-openapi generate-openapi: export OPENAPIGENERATORCLI_VERSION := $(OPENAPIGENERATORCLI_VERSION)
+lint-openapi generate-openapi-go: export OPENAPIGENERATORCLI_VERSION := $(OPENAPIGENERATORCLI_VERSION)
 
-lint-openapi: ## List OpenAPI spec
+lint-openapi: $(OPENAPIGENERATORCLI) $(OPENAPI_SPEC) ## List OpenAPI spec
 	$(info $(_bullet) Linting <openapi>)
 	$(OPENAPIGENERATORCLI) validate --input-spec $(OPENAPI_SPEC)
 
-generate-openapi: ## Generate OpenAPI code
+generate-openapi: $(OPENAPIGENERATORCLI) $(OPENAPI_SPEC) ## Generate OpenAPI code
 	$(info $(_bullet) Generating <openapi>)
 	$(OPENAPIGENERATORCLI) generate \
 		--input-spec $(OPENAPI_SPEC) \

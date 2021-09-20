@@ -6,20 +6,27 @@ include makefiles/shared.mk
 GO ?= go
 FORMAT_FILES ?= .
 
-GOFUMPT := bin/gofumpt
 GOFUMPT_VERSION ?= v0.1.1
+GOFUMPT_ROOT := $(BUILD)/gofumpt-$(GOFUMPT_VERSION)
+GOFUMPT := $(GOFUMPT_ROOT)/gofumpt
 
-GOLANGCILINT := bin/golangci-lint
 GOLANGCILINT_VERSION ?= v1.42.0
+GOLANGCILINT_ROOT := $(BUILD)/golangci-lint-$(GOLANGCILINT_VERSION)
+GOLANGCILINT := $(GOLANGCILINT_ROOT)/golangci-lint
 GOLANGCILINT_CONCURRENCY ?= 16
 
-$(GOFUMPT): $(BIN)
-	$(info $(_bullet) Installing <gofumpt>)
-	GOBIN=$(BIN) $(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
+$(GOFUMPT): export GOBIN := $(abspath $(GOFUMPT_ROOT))
 
-$(GOLANGCILINT): $(BIN)
+$(GOFUMPT):
+	$(info $(_bullet) Installing <gofumpt>)
+	@mkdir -p $(GOFUMPT_ROOT)
+	$(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
+
+$(GOLANGCILINT): export GOBIN := $(abspath $(GOLANGCILINT_ROOT))
+
+$(GOLANGCILINT):
 	$(info $(_bullet) Installing <golangci-lint>)
-	GOBIN=$(BIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCILINT_VERSION)
+	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCILINT_VERSION)
 
 clean: clean-go
 
@@ -51,13 +58,17 @@ vendor-go: ## Vendor Go dependencies
 	$(info $(_bullet) Vendoring dependencies <go>)
 	$(GO) mod vendor
 
+format-go: export PATH := "$(GOFUMPT_ROOT):$(PATH)"
+
 format-go: $(GOFUMPT) ## Format Go code
 	$(info $(_bullet) Formatting code)
-	$(GOFUMPT) -w $(FORMAT_FILES)
+	gofumpt -w $(FORMAT_FILES)
+
+lint-go: export PATH := "$(GOLANGCILINT_ROOT):$(PATH)""
 
 lint-go: $(GOLANGCILINT)
 	$(info $(_bullet) Linting <go>) 
-	$(GOLANGCILINT) run --concurrency $(GOLANGCILINT_CONCURRENCY) ./...
+	golangci-lint run --concurrency $(GOLANGCILINT_CONCURRENCY) ./...
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
