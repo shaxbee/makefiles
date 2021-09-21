@@ -8,7 +8,7 @@ ifeq ($(ARCH),x86_64)
 	ARCH = amd64
 endif
 
-BUILD ?= .build
+BUILD ?= build
 
 $(BUILD):
 	@mkdir -p $(BUILD)

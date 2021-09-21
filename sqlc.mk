@@ -7,7 +7,7 @@ SQLC_VERSION ?= v1.10.0
 SQLC_ROOT := $(BUILD)/sqlc-$(SQLC_VERSION)
 SQLC := $(SQLC_ROOT)/sqlc
 
-$(SQLC): export GOBIN := $(abspath $(SQLC_ROOT))
+$(SQLC): export GOBIN = $(abspath $(SQLC_ROOT))
 
 $(SQLC):
 	$(info $(_bullet) Installing <sqlc>)
@@ -18,10 +18,8 @@ $(SQLC):
 
 generate: generate-sqlc
 
-generate-sqlc: export PATH := "$(SQLC_ROOT):$(PATH)"
-
-generate-sqlc: $(SQLC) ## Generate SQLC code
+generate-sqlc: $(SQLC)
 	$(info $(_bullet) Generating <sqlc>)
-	sqlc generate
+	$(SQLC) generate
 
 endif

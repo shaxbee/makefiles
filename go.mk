@@ -15,14 +15,14 @@ GOLANGCILINT_ROOT := $(BUILD)/golangci-lint-$(GOLANGCILINT_VERSION)
 GOLANGCILINT := $(GOLANGCILINT_ROOT)/golangci-lint
 GOLANGCILINT_CONCURRENCY ?= 16
 
-$(GOFUMPT): export GOBIN := $(abspath $(GOFUMPT_ROOT))
+$(GOFUMPT): export GOBIN = $(abspath $(GOFUMPT_ROOT))
 
 $(GOFUMPT):
 	$(info $(_bullet) Installing <gofumpt>)
 	@mkdir -p $(GOFUMPT_ROOT)
 	$(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
 
-$(GOLANGCILINT): export GOBIN := $(abspath $(GOLANGCILINT_ROOT))
+$(GOLANGCILINT): export GOBIN = $(abspath $(GOLANGCILINT_ROOT))
 
 $(GOLANGCILINT):
 	$(info $(_bullet) Installing <golangci-lint>)
@@ -58,17 +58,13 @@ vendor-go: ## Vendor Go dependencies
 	$(info $(_bullet) Vendoring dependencies <go>)
 	$(GO) mod vendor
 
-format-go: export PATH := "$(GOFUMPT_ROOT):$(PATH)"
-
 format-go: $(GOFUMPT) ## Format Go code
 	$(info $(_bullet) Formatting code)
-	gofumpt -w $(FORMAT_FILES)
-
-lint-go: export PATH := "$(GOLANGCILINT_ROOT):$(PATH)""
+	$(GOFUMPT) -w $(FORMAT_FILES)
 
 lint-go: $(GOLANGCILINT)
 	$(info $(_bullet) Linting <go>) 
-	golangci-lint run --concurrency $(GOLANGCILINT_CONCURRENCY) ./...
+	$(GOLANGCILINT) run --concurrency $(GOLANGCILINT_CONCURRENCY) ./...
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
