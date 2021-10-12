@@ -19,7 +19,7 @@ deploy: deploy-skaffold
 .PHONY: clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold
 
 clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: $(SKAFFOLD) $(KUBECTL)
-clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH = "$(SKAFFOLD_ROOT):$(KUBECTL_ROOT):$(shell echo $$PATH)"
+clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := $(SKAFFOLD_ROOT):$(KUBECTL_ROOT):$(shell echo $$PATH)
 
 clean-skaffold: ## Clean Skaffold
 	$(info $(_bullet) Cleaning <skaffold>)

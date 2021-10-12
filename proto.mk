@@ -43,7 +43,7 @@ $(PROTOC_GEN_GO_GRPC): $(BUILD_BIN)
 
 generate: generate-proto
 
-generate-proto: export PATH = $(PROTOC_GEN_GO_ROOT):$(PROTOC_GEN_GO_GRPC_ROOT):$(shell echo $$PATH)
+generate-proto: export PATH := $(PROTOC_GEN_GO_ROOT):$(PROTOC_GEN_GO_GRPC_ROOT):$(shell echo $$PATH)
 
 generate-proto: $(BUF) $(PROTOC_GEN_GO) $(PROTOC_GEN_GO_GRPC)
 	$(info $(_bullet) Generating <proto>)

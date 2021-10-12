@@ -29,7 +29,7 @@ bootstrap: bootstrap-kind
 
 .PHONY: clean-kind bootstrap-kind
 
-clean-kind bootstrap-kind: export PATH := "$(KIND_ROOT):$(KUBECTL_ROOT):$(PATH)"
+clean-kind bootstrap-kind: export PATH := "$(KIND_ROOT):$(KUBECTL_ROOT):$(shell echo $$PATH)"
 clean-kind bootstrap-kind: export CLUSTER_NAME := $(KIND_CLUSTER_NAME)
 clean-kind bootstrap-kind: export K8S_VERSION := $(KIND_K8S_VERSION:v%=%)
 clean-kind bootstrap-kind: export HOST_PORT := $(KIND_HOST_PORT)
