@@ -15,6 +15,8 @@ GOLANGCILINT_ROOT := $(BUILD)/golangci-lint-$(GOLANGCILINT_VERSION)
 GOLANGCILINT := $(GOLANGCILINT_ROOT)/golangci-lint
 GOLANGCILINT_CONCURRENCY ?= 16
 
+_go_modules = $(shell for file in `find . -type f -name go.mod`; do dirname $$file; done)
+
 $(GOFUMPT): export GOBIN = $(abspath $(GOFUMPT_ROOT))
 
 $(GOFUMPT):
@@ -50,9 +52,18 @@ clean-go: ## Clean Go
 	$(info $(_bullet) Cleaning <go>)
 	rm -rf vendor/
 
-deps-go: ## Download Go dependencies
-	$(info $(_bullet) Downloading dependencies <go>)
-	$(GO) mod download
+# TODO: remove _go_modules hack when https://github.com/golang/go/issues/45713 is released
+
+deps-go: ## Tidy go dependencies
+	$(info $(_bullet) Tidy dependencies <go>)
+	@for module in $(_go_modules); do \
+		cd $${module} && \
+		$(GO) mod tidy && \
+		echo "go mod tidy ($${module})"; \
+		$(GO) mod download && \
+		echo "go mod download ($${module})"; \
+		cd - >/dev/null; \
+	done
 
 vendor-go: ## Vendor Go dependencies
 	$(info $(_bullet) Vendoring dependencies <go>)
