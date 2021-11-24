@@ -59,9 +59,9 @@ deps-go: ## Tidy go dependencies
 	@for module in $(_go_modules); do \
 		cd $${module} && \
 		$(GO) mod tidy && \
-		echo "go mod tidy ($${module})"; \
+		echo "go mod tidy ($${module})" && \
 		$(GO) mod download && \
-		echo "go mod download ($${module})"; \
+		echo "go mod download ($${module})" && \
 		cd - >/dev/null; \
 	done
 
@@ -79,14 +79,30 @@ lint-go: $(GOLANGCILINT)
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
-	$(GO) test ./...
+	@for module in $(_go_modules); do \
+		cd $${module} && \
+		echo "go test ./... ($${module})" && \
+		$(GO) test ./...; \
+		cd - >/dev/null; \
+	done
 	
 test-coverage-go: ## Run Go tests with coverage
 	$(info $(_bullet) Running tests with coverage <go>) 
-	$(GO) test -cover ./...
+		$(info $(_bullet) Running tests <go>)
+	@for module in $(_go_modules); do \
+		cd $${module} && \
+		echo "go test -cover ./... ($${module})" && \
+		$(GO) test -cover ./...; \
+		cd - >/dev/null; \
+	done
 
 integration-test-go: ## Run Go integration tests
 	$(info $(_bullet) Running integration tests <go>) 
-	$(GO) test -tags integration -count 1 ./...
+	@for module in $(_go_modules); do \
+		cd $${module} && \
+		echo "o test -tags integration -count 1 ./... ($${module})" && \
+		$(GO) test -tags integration -count 1 ./...; \
+		cd - >/dev/null; \
+	done
 
 endif
