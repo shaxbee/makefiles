@@ -88,7 +88,6 @@ test-go: ## Run Go tests
 	
 test-coverage-go: ## Run Go tests with coverage
 	$(info $(_bullet) Running tests with coverage <go>) 
-		$(info $(_bullet) Running tests <go>)
 	@for module in $(_go_modules); do \
 		cd $${module} && \
 		echo "go test -cover ./... ($${module})" && \
@@ -100,7 +99,7 @@ integration-test-go: ## Run Go integration tests
 	$(info $(_bullet) Running integration tests <go>) 
 	@for module in $(_go_modules); do \
 		cd $${module} && \
-		echo "o test -tags integration -count 1 ./... ($${module})" && \
+		echo "go test -tags integration -count 1 ./... ($${module})" && \
 		$(GO) test -tags integration -count 1 ./...; \
 		cd - >/dev/null; \
 	done
