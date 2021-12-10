@@ -6,7 +6,7 @@ include makefiles/shared.mk
 GO ?= go
 FORMAT_FILES ?= .
 
-GOFUMPT_VERSION ?= v0.1.1
+GOFUMPT_VERSION ?= v0.2.0
 GOFUMPT_ROOT := $(BUILD)/gofumpt-$(GOFUMPT_VERSION)
 GOFUMPT := $(GOFUMPT_ROOT)/gofumpt
 
