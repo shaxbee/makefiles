@@ -56,12 +56,13 @@ clean-go: ## Clean Go
 
 deps-go: ## Tidy go dependencies
 	$(info $(_bullet) Tidy dependencies <go>)
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		$(GO) mod tidy && \
-		echo "go mod tidy ($${module})" && \
-		$(GO) mod download && \
-		echo "go mod download ($${module})" && \
+	@set -e; \
+	for module in $(_go_modules); do \
+		cd $${module}; \
+		$(GO) mod tidy; \
+		echo "go mod tidy ($${module})"; \
+		$(GO) mod download; \
+		echo "go mod download ($${module})"; \
 		cd - >/dev/null; \
 	done
 
@@ -79,27 +80,30 @@ lint-go: $(GOLANGCILINT)
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		echo "go test ./... ($${module})" && \
+	@set -e; \
+	for module in $(_go_modules); do \
+		cd $${module}; \
+		echo "go test ./... ($${module})"; \
 		$(GO) test ./...; \
 		cd - >/dev/null; \
 	done
 	
 test-coverage-go: ## Run Go tests with coverage
-	$(info $(_bullet) Running tests with coverage <go>) 
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		echo "go test -cover ./... ($${module})" && \
+	$(info $(_bullet) Running tests with coverage <go>)
+	@set -e; \
+	for module in $(_go_modules); do \
+		cd $${module}; \
+		echo "go test -cover ./... ($${module})"; \
 		$(GO) test -cover ./...; \
 		cd - >/dev/null; \
 	done
 
 integration-test-go: ## Run Go integration tests
-	$(info $(_bullet) Running integration tests <go>) 
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		echo "go test -tags integration -count 1 ./... ($${module})" && \
+	$(info $(_bullet) Running integration tests <go>)
+	@set -e; \
+	for module in $(_go_modules); do \
+		cd $${module}; \
+		echo "go test -tags integration -count 1 ./... ($${module})"; \
 		$(GO) test -tags integration -count 1 ./...; \
 		cd - >/dev/null; \
 	done
