@@ -32,6 +32,8 @@ $(GOLANGCILINT):
 
 clean: clean-go
 
+tools: tools-go
+
 deps: deps-go
 
 vendor: vendor-go
@@ -46,7 +48,7 @@ test-coverage: test-coverage-go
 
 integration-test: integration-test-go
 
-.PHONY: deps-go format-go lint-go test-go test-coverage-go integration-test-go
+.PHONY: clean-go tools-go deps-go format-go lint-go test-go test-coverage-go integration-test-go
 
 clean-go: ## Clean Go
 	$(info $(_bullet) Cleaning <go>)
@@ -65,6 +67,8 @@ deps-go: ## Tidy go dependencies
 		echo "go mod download ($${module})"; \
 		cd - >/dev/null; \
 	done
+
+tools-go: $(GOFUMPT) $(GOLANGCILINT)
 
 vendor-go: ## Vendor Go dependencies
 	$(info $(_bullet) Vendoring dependencies <go>)

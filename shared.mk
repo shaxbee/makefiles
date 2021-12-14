@@ -22,6 +22,8 @@ help: ## Help
 
 clean: clean-build ## Clean targets
 
+tools: ## Download tools
+
 deps: ## Download dependencies
 
 vendor: ## Vendor dependencies
@@ -50,11 +52,11 @@ dev: ## Run in development mode
 
 debug: ## Run in debug mode
 
-.PHONY: clean-build git-dirty git-hooks
+.PHONY: clean-build
 
 clean-build: ## Clean build tools
 	$(info $(_bullet) Cleaning <build>)
-	rm -rf $(BUILD_BIN)
+	rm -rf $(BUILD)
 
 _bullet := $(shell printf "\033[34;1m▶\033[0m")
 

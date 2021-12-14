@@ -16,7 +16,13 @@ $(SQLC):
 
 .PHONY: generate generate-sqlc
 
+tools: tools-sqlc
+
 generate: generate-sqlc
+
+.PHONY: tools-sqlc generate-sqlc
+
+tools-sqlc: $(SQLC)
 
 generate-sqlc: $(SQLC)
 	$(info $(_bullet) Generating <sqlc>)
