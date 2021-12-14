@@ -15,8 +15,6 @@ GOLANGCILINT_ROOT := $(BUILD)/golangci-lint-$(GOLANGCILINT_VERSION)
 GOLANGCILINT := $(GOLANGCILINT_ROOT)/golangci-lint
 GOLANGCILINT_CONCURRENCY ?= 16
 
-_go_modules = $(shell for file in `find . -type f -name go.mod`; do dirname $$file; done)
-
 $(GOFUMPT): export GOBIN = $(abspath $(GOFUMPT_ROOT))
 
 $(GOFUMPT):
@@ -54,19 +52,10 @@ clean-go: ## Clean Go
 	$(info $(_bullet) Cleaning <go>)
 	rm -rf vendor/
 
-# TODO: remove _go_modules hack when https://github.com/golang/go/issues/45713 is released
-
 deps-go: ## Tidy go dependencies
 	$(info $(_bullet) Tidy dependencies <go>)
-	@set -e; \
-	for module in $(_go_modules); do \
-		cd $${module}; \
-		$(GO) mod tidy; \
-		echo "go mod tidy ($${module})"; \
-		$(GO) mod download; \
-		echo "go mod download ($${module})"; \
-		cd - >/dev/null; \
-	done
+	$(GO) mod tidy
+	$(GO) mod download
 
 tools-go: $(GOFUMPT) $(GOLANGCILINT)
 
@@ -84,32 +73,14 @@ lint-go: $(GOLANGCILINT)
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
-	@set -e; \
-	for module in $(_go_modules); do \
-		cd $${module}; \
-		echo "go test ./... ($${module})"; \
-		$(GO) test ./...; \
-		cd - >/dev/null; \
-	done
+	$(GO) test ./...
 	
 test-coverage-go: ## Run Go tests with coverage
 	$(info $(_bullet) Running tests with coverage <go>)
-	@set -e; \
-	for module in $(_go_modules); do \
-		cd $${module}; \
-		echo "go test -cover ./... ($${module})"; \
-		$(GO) test -cover ./...; \
-		cd - >/dev/null; \
-	done
+	$(GO) test -cover ./...
 
 integration-test-go: ## Run Go integration tests
 	$(info $(_bullet) Running integration tests <go>)
-	@set -e; \
-	for module in $(_go_modules); do \
-		cd $${module}; \
-		echo "go test -tags integration -count 1 ./... ($${module})"; \
-		$(GO) test -tags integration -count 1 ./...; \
-		cd - >/dev/null; \
-	done
+	$(GO) test -tags integration -count 1 ./...
 
 endif
