@@ -33,8 +33,10 @@ fi
 # create registry container unless it already exists
 registry_running="$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true)"
 if [ "${registry_running}" != 'true' ]; then
+  echo "setting up local docker registry"
+  docker pull registry:2 &>/dev/null
   docker run \
-    -d --restart=always -p "${reg_port}:5000" --name "${reg_name}" \
+    -d --restart=always -p "127.0.0.1:${reg_port}:5000" --name "${reg_name}" \
     registry:2 &>/dev/null
 fi
 
