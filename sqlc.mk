@@ -13,6 +13,7 @@ $(SQLC):
 	$(info $(_bullet) Installing <sqlc>)
 	@mkdir -p $(SQLC_ROOT)
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@$(SQLC_VERSION)
+	ln -s $(subst $(BUILD)/,,$(SQLC)) $(BUILD)/sqlc
 
 .PHONY: generate generate-sqlc
 
@@ -26,6 +27,6 @@ tools-sqlc: $(SQLC)
 
 generate-sqlc: $(SQLC)
 	$(info $(_bullet) Generating <sqlc>)
-	$(SQLC) generate
+	sqlc generate
 
 endif

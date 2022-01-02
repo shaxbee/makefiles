@@ -20,6 +20,7 @@ $(KIND):
 	@mkdir -p $(KIND_ROOT)
 	curl -sSfL https://kind.sigs.k8s.io/dl/$(KIND_VERSION)/kind-$(OS)-$(ARCH) -o $(KIND)
 	chmod u+x $(KIND)
+	ln -s $(subst $(BUILD)/,,$(KIND)) $(BUILD)/kind
 
 clean-bin: clean-kind
 
@@ -29,7 +30,6 @@ bootstrap: bootstrap-kind
 
 .PHONY: clean-kind bootstrap-kind
 
-clean-kind bootstrap-kind: export PATH := "$(KIND_ROOT):$(KUBECTL_ROOT):$(shell echo $$PATH)"
 clean-kind bootstrap-kind: export CLUSTER_NAME := $(KIND_CLUSTER_NAME)
 clean-kind bootstrap-kind: export K8S_VERSION := $(KIND_K8S_VERSION:v%=%)
 clean-kind bootstrap-kind: export HOST_PORT := $(KIND_HOST_PORT)

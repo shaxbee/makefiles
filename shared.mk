@@ -9,6 +9,7 @@ ifeq ($(ARCH),x86_64)
 endif
 
 BUILD ?= build
+SHELL := env PATH=$(abspath $(BUILD)):$(shell echo $$PATH) /bin/bash
 
 $(BUILD):
 	@mkdir -p $(BUILD)

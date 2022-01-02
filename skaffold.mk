@@ -13,13 +13,13 @@ $(SKAFFOLD):
 	@mkdir -p $(SKAFFOLD_ROOT)
 	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-$(ARCH) -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
+	ln -s $(subst $(BUILD)/,,$(SKAFFOLD)) $(BUILD)/skaffold
 
 deploy: deploy-skaffold
 
 .PHONY: clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold
 
 clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: $(SKAFFOLD) $(KUBECTL)
-clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := $(SKAFFOLD_ROOT):$(KUBECTL_ROOT):$(shell echo $$PATH)
 
 clean-skaffold: ## Clean Skaffold
 	$(info $(_bullet) Cleaning <skaffold>)
