@@ -15,6 +15,8 @@ $(SKAFFOLD):
 	chmod u+x $(SKAFFOLD)
 	ln -s $(subst $(BUILD)/,,$(SKAFFOLD)) $(BUILD)/skaffold
 
+tools: $(SKAFFOLD)
+
 deploy: deploy-skaffold
 
 .PHONY: clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold

@@ -15,15 +15,11 @@ $(SQLC):
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@$(SQLC_VERSION)
 	ln -s $(subst $(BUILD)/,,$(SQLC)) $(BUILD)/sqlc
 
-.PHONY: generate generate-sqlc
-
-tools: tools-sqlc
+tools: $(SQLC)
 
 generate: generate-sqlc
 
-.PHONY: tools-sqlc generate-sqlc
-
-tools-sqlc: $(SQLC)
+.PHONY: generate-sqlc
 
 generate-sqlc: $(SQLC)
 	$(info $(_bullet) Generating <sqlc>)

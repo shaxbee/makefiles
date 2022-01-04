@@ -22,6 +22,8 @@ $(KIND):
 	chmod u+x $(KIND)
 	ln -s $(subst $(BUILD)/,,$(KIND)) $(BUILD)/kind
 
+tools: $(KIND)
+
 clean-bin: clean-kind
 
 clean: clean-kind

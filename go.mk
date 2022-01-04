@@ -31,7 +31,7 @@ $(GOLANGCILINT):
 
 clean: clean-go
 
-tools: tools-go
+tools: $(GOFUMPT) $(GOLANGCILINT)
 
 deps: deps-go
 
@@ -47,7 +47,7 @@ test-coverage: test-coverage-go
 
 integration-test: integration-test-go
 
-.PHONY: clean-go tools-go deps-go format-go lint-go test-go test-coverage-go integration-test-go
+.PHONY: clean-go deps-go format-go lint-go test-go test-coverage-go integration-test-go
 
 clean-go: ## Clean Go
 	$(info $(_bullet) Cleaning <go>)
@@ -57,8 +57,6 @@ deps-go: ## Tidy go dependencies
 	$(info $(_bullet) Tidy dependencies <go>)
 	$(GO) mod tidy
 	$(GO) mod download
-
-tools-go: $(GOFUMPT) $(GOLANGCILINT)
 
 vendor-go: ## Vendor Go dependencies
 	$(info $(_bullet) Vendoring dependencies <go>)

@@ -14,5 +14,7 @@ $(KUBECTL):
 	chmod u+x $(KUBECTL)
 	ln -s $(subst $(BUILD)/,,$(KUBECTL)) $(BUILD)/kubectl
 
+tools: $(KUBECTL)
+
 endif
 
