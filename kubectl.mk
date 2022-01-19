@@ -12,7 +12,7 @@ $(KUBECTL):
 	@mkdir -p $(KUBECTL_ROOT)
 	curl -sSfL https://storage.googleapis.com/kubernetes-release/release/$(KUBECTL_VERSION)/bin/$(OS)/$(ARCH)/kubectl -o $(KUBECTL)
 	chmod u+x $(KUBECTL)
-	ln -s $(subst $(BUILD)/,,$(KUBECTL)) $(BUILD)/kubectl
+	ln -sf $(subst $(BUILD)/,,$(KUBECTL)) $(BUILD)/kubectl
 
 tools: $(KUBECTL)
 

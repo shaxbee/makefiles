@@ -13,7 +13,7 @@ $(SKAFFOLD):
 	@mkdir -p $(SKAFFOLD_ROOT)
 	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-$(ARCH) -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
-	ln -s $(subst $(BUILD)/,,$(SKAFFOLD)) $(BUILD)/skaffold
+	ln -sf $(subst $(BUILD)/,,$(SKAFFOLD)) $(BUILD)/skaffold
 
 tools: $(SKAFFOLD)
 

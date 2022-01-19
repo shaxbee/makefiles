@@ -13,7 +13,7 @@ $(SQLC):
 	$(info $(_bullet) Installing <sqlc>)
 	@mkdir -p $(SQLC_ROOT)
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@$(SQLC_VERSION)
-	ln -s $(subst $(BUILD)/,,$(SQLC)) $(BUILD)/sqlc
+	ln -sf $(subst $(BUILD)/,,$(SQLC)) $(BUILD)/sqlc
 
 tools: $(SQLC)
 

@@ -20,7 +20,7 @@ $(KIND):
 	@mkdir -p $(KIND_ROOT)
 	curl -sSfL https://kind.sigs.k8s.io/dl/$(KIND_VERSION)/kind-$(OS)-$(ARCH) -o $(KIND)
 	chmod u+x $(KIND)
-	ln -s $(subst $(BUILD)/,,$(KIND)) $(BUILD)/kind
+	ln -sf $(subst $(BUILD)/,,$(KIND)) $(BUILD)/kind
 
 tools: $(KIND)
 

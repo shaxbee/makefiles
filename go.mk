@@ -21,13 +21,13 @@ $(GOFUMPT):
 	$(info $(_bullet) Installing <gofumpt>)
 	@mkdir -p $(GOFUMPT_ROOT)
 	$(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
-	ln -s $(subst $(BUILD)/,,$(GOFUMPT)) $(BUILD)/gofumpt
+	ln -sf $(subst $(BUILD)/,,$(GOFUMPT)) $(BUILD)/gofumpt
 
 $(GOLANGCILINT):
 	$(info $(_bullet) Installing <golangci-lint>)
 	@mkdir -p $(GOLANGCILINT_ROOT)
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOLANGCILINT_ROOT) $(GOLANGCILINT_VERSION)
-	ln -s $(subst $(BUILD)/,,$(GOLANGCILINT)) $(BUILD)/golangci-lint
+	ln -sf $(subst $(BUILD)/,,$(GOLANGCILINT)) $(BUILD)/golangci-lint
 
 clean: clean-go
 
