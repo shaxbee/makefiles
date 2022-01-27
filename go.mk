@@ -43,11 +43,13 @@ lint: lint-go
 
 test: test-go
 
-test-coverage: test-coverage-go
+test-cover: test-cover-go
 
 integration-test: integration-test-go
 
-.PHONY: clean-go deps-go format-go lint-go test-go test-coverage-go integration-test-go
+integration-test-cover: integration-test-cover-go
+
+.PHONY: clean-go deps-go format-go lint-go test-go test-cover-go integration-test-go integration-test-cover-go
 
 clean-go: ## Clean Go
 	$(info $(_bullet) Cleaning <go>)
@@ -74,12 +76,16 @@ test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
 	$(GO) test ./...
 	
-test-coverage-go: ## Run Go tests with coverage
+test-cover-go: ## Run Go tests with coverage
 	$(info $(_bullet) Running tests with coverage <go>)
-	$(GO) test -cover ./...
+	$(GO) test -coverprofile=coverage.out ./...
 
 integration-test-go: ## Run Go integration tests
 	$(info $(_bullet) Running integration tests <go>)
 	$(GO) test -tags integration -count 1 ./...
+
+integration-test-cover-go: ## Run Go integration tests with coverage
+	$(info $(_bullet) Running integration tests with coverage <go>)
+	$(GO) test -coverprofile=coverage.out -tags integration -count 1 ./...
 
 endif

@@ -14,7 +14,7 @@ SHELL := env PATH=$(abspath $(BUILD)):$(shell echo $$PATH) /bin/bash
 $(BUILD):
 	@mkdir -p $(BUILD)
 
-.PHONY: help clean deps vendor generate format lint test test-coverage integration-test build bootrap deploy run dev debug
+.PHONY: help clean deps vendor generate format lint test test-cover integration-test build bootrap deploy run dev debug
 
 all: deps generate format lint test build
 
@@ -37,9 +37,11 @@ lint: ## Lint code
 
 test: ## Run tests
 
-test-coverage: ## Run tests with coverage
+test-cover: ## Run tests with coverage
 
 integration-test: ## Run integration tests
+
+integration-test-cover: ## Run integration tests with coverage
 
 build: ## Build all targets
 
