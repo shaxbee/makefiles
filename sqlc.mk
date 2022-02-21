@@ -3,7 +3,7 @@ _include_sqlc_mk := 1
 
 include makefiles/go.mk
 
-SQLC_VERSION ?= v1.11.0
+SQLC_VERSION ?= v1.12.0
 SQLC_ROOT := $(BUILD)/sqlc-$(SQLC_VERSION)
 SQLC := $(SQLC_ROOT)/sqlc
 

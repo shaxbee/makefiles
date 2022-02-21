@@ -1,0 +1,18 @@
+#!/bin/bash -ex
+
+CONTOUR_CHART_VERSION=${CONTOUR_CHART_VERSION:-v7.3.7}
+CONTOUR_VERSION=${CONTOUR_VERSION:-v1.20.0}
+
+if [[ $(helm status contour &>/dev/null) ]]; then
+    exit 0;
+fi
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+helm install contour bitnami/contour \
+    --kube-context ${BOOTSTRAP_CONTEXT} \
+    --version ${CONTOUR_CHART_VERSION/v/} \
+    --create-namespace --namespace ingress \
+    --set contour.image.registry=ghcr.io \
+    --set contour.image.repository=projectcontour/contour \
+    --set contour.image.tag=${CONTOUR_VERSION}
