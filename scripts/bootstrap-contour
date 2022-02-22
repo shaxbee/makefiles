@@ -1,17 +1,19 @@
 #!/bin/bash -ex
 
-CONTOUR_CHART_VERSION=${CONTOUR_CHART_VERSION:-v7.3.7}
 CONTOUR_VERSION=${CONTOUR_VERSION:-v1.20.0}
 
-if [[ $(helm status contour &>/dev/null) ]]; then
+helm -n ingress status contour &>/dev/null || exit_code=$?
+if [[ $exit_code -eq 0 ]]; then
     exit 0;
 fi
+
+kubectl kustomize github.com/kubernetes-sigs/gateway-api/config/crd?ref=v0.4.1 | \
+    kubectl --context ${BOOTSTRAP_CONTEXT} apply -f -
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 
 helm install contour bitnami/contour \
     --kube-context ${BOOTSTRAP_CONTEXT} \
-    --version ${CONTOUR_CHART_VERSION/v/} \
     --create-namespace --namespace ingress \
     --set contour.image.registry=ghcr.io \
     --set contour.image.repository=projectcontour/contour \
