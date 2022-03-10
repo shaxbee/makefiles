@@ -17,4 +17,5 @@ helm install contour bitnami/contour \
     --create-namespace --namespace ingress \
     --set contour.image.registry=ghcr.io \
     --set contour.image.repository=projectcontour/contour \
-    --set contour.image.tag=${CONTOUR_VERSION}
+    --set contour.image.tag=${CONTOUR_VERSION} \
+    --set configInline.gateway.controllerName=projectcontour.io/projectcontour/contour
