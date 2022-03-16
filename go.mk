@@ -5,6 +5,8 @@ include makefiles/shared.mk
 
 GO ?= go
 FORMAT_FILES ?= .
+GO_TEST_TIMEOUT = 30s
+GO_INTEGRATION_TEST_TIMEOUT = 1m
 
 GOFUMPT_VERSION ?= v0.2.0
 GOFUMPT_ROOT := $(BUILD)/gofumpt-$(GOFUMPT_VERSION)
@@ -74,18 +76,18 @@ lint-go: $(GOLANGCILINT)
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
-	$(GO) test ./...
+	$(GO) test -timeout $(GO_TEST_TIMEOUT) ./...
 	
 test-cover-go: ## Run Go tests with coverage
 	$(info $(_bullet) Running tests with coverage <go>)
-	$(GO) test -coverprofile=coverage.out ./...
+	$(GO) test -timeout $(GO_TEST_TIMEOUT) -coverprofile=coverage.out ./...
 
 integration-test-go: ## Run Go integration tests
 	$(info $(_bullet) Running integration tests <go>)
-	$(GO) test -tags integration -count 1 ./...
+	$(GO) test -timeout $(GO_INTEGRATION_TEST_TIMEOUT) -tags integration -count 1 ./...
 
 integration-test-cover-go: ## Run Go integration tests with coverage
 	$(info $(_bullet) Running integration tests with coverage <go>)
-	$(GO) test -coverprofile=coverage.out -tags integration -count 1 ./...
+	$(GO) test -timeout $(GO_INTEGRATION_TEST_TIMEOUT) -coverprofile=coverage.out -tags integration -count 1 ./...
 
 endif
