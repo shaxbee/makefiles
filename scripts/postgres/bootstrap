@@ -1,0 +1,72 @@
+#!/bin/bash -e
+
+script_dir=$(dirname "$0")
+source "${script_dir}/setup"
+
+function ensure_namespace() {
+    ${KUBECTL} create namespace ${POSTGRES_NAMESPACE} 2>/dev/null || return 0
+}
+
+function ensure_database_deployment() {
+    exit_code=0
+    ${kubectl} get deployment/postgres &>/dev/null || exit_code=$?
+    if [[ $exit_code == 0 ]]; then
+        return;
+    fi
+
+    ${kubectl} apply -k ${script_dir}
+    ${kubectl} rollout status deployment/postgres
+    echo "Created postgres.${POSTGRES_NAMESPACE} deployment"
+}
+
+function ensure_database() {
+    local database="${1}"
+    local user="${database}"
+    local extensions=(${2//,/ })
+
+    local ensure_database_sql=$(cat \
+<<SQL
+    SELECT
+        NOT EXISTS(SELECT FROM pg_database WHERE datname='${database}') AS create_db,
+        NOT EXISTS(SELECT FROM pg_roles WHERE rolname='${user}') AS create_user;
+    \gset
+    \if :create_db
+        CREATE DATABASE "${database}";
+    \endif
+    \if :create_user
+        CREATE USER "${user}";
+    \endif
+
+    GRANT ALL PRIVILEGES ON DATABASE "${database}" TO "${user}";
+SQL
+    )
+
+    local psql_output="/dev/null"
+    if [[ ${POSTGRES_DEBUG} != false ]]; then
+        psql_output="/dev/stdoud"
+    fi
+
+    local exit_code=0
+    echo "${ensure_database_sql}" | psql &>${psql_output} || exit_code=$?
+    if [[ $exit_code != 0 ]]; then
+        echo "Failed to create database ${database}" >&2 
+        return $exit_code
+    fi
+
+    echo "Ensured database(s) ${POSTGRES_DATABASES} exist in postgres.${POSTGRES_NAMESPACE}"
+    
+    if [[ -z ${extensions} ]]; then
+        return 0
+    fi
+
+    local extensions_sql=$(printf 'CREATE EXTENSION IF NOT EXISTS "%s";\n' "${extensions[@]}")
+    printf "${extensions_sql}" | psql &>${psql_output}
+}
+
+ensure_namespace
+ensure_database_deployment
+
+databases=(${POSTGRES_DATABASES//,/ })
+for database in "${databases[@]}"; do
+    ensure_database "${database}" "${POSTGRES_EXTENSIONS}"
+done

@@ -30,23 +30,31 @@ clean: clean-kind
 
 bootstrap: bootstrap-kind
 
-.PHONY: clean-kind bootstrap-kind
+.PHONY: clean-kind bootstrap-kind bootstrap-hydra
 
 clean-kind bootstrap-kind: export CLUSTER_NAME := $(KIND_CLUSTER_NAME)
 clean-kind bootstrap-kind: export K8S_VERSION := $(KIND_K8S_VERSION:v%=%)
 clean-kind bootstrap-kind: export HOST_PORT := $(KIND_HOST_PORT)
-bootstrap-contour: export BOOTSTRAP_CONTEXT := $(BOOTSTRAP_CONTEXT)
+bootstrap-contour bootstrap-hydra clean-hydra: export BOOTSTRAP_CONTEXT := $(BOOTSTRAP_CONTEXT)
 
 clean-kind: $(KIND) # Delete cluster
 	$(info $(_bullet) Cleaning <kind>)
-	$(dir $(_kind_mk_path))scripts/clean-kind
+	$(dir $(_kind_mk_path))scripts/kind/clean
 
 bootstrap-kind: $(KUBECTL) $(KIND)
 	$(info $(_bullet) Bootstraping <kind>)
-	$(dir $(_kind_mk_path))scripts/bootstrap-kind
+	$(dir $(_kind_mk_path))scripts/kind/bootstrap
 
 bootstrap-contour: bootstrap-kind
 	$(info $(_bullet) Bootstraping <contour>)
-	$(dir $(_kind_mk_path))scripts/bootstrap-contour
+	$(dir $(_kind_mk_path))scripts/contour/bootstrap
+
+bootstrap-hydra: bootstrap-kind
+	$(info $(_bullet) Bootstrapping <hydra>)
+	$(dir $(_kind_mk_path))scripts/hydra/bootstrap
+
+clean-hydra:
+	$(info $(_bullet) Cleaning <hydra>)
+	$(dir $(_kind_mk_path))scripts/hydra/clean
 
 endif

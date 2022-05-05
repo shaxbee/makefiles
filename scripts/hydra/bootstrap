@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+script_dir=$(dirname "$0")
+source ${script_dir}/setup
+
+HYDRA_VERSION=${HYDRA_VERSION:-v0.23.1}
+
+helm -n ${HYDRA_NAMESPACE} status hydra &>/dev/null || exit_code=$?
+if [[ $exit_code -eq 0 ]]; then
+    exit 0;
+fi
+
+echo "Setting up Postgres user and database"
+POSTGRES_DATABASES=hydra POSTGRES_NAMESPACE=${HYDRA_NAMESPACE} ${script_dir}/../postgres/bootstrap
+
+echo "Updating ory helm repository"
+helm repo add ory https://k8s.ory.sh/helm/charts 1>/dev/null
+helm repo update ory 1>/dev/null
+
+install_flags=""
+if [[ ${HYDRA_DEBUG} != false ]]; then
+    install_flags="--debug"
+fi
+
+dsn="postgres://hydra@postgres.${HYDRA_NAMESPACE}/hydra?sslmode=disable"
+
+echo "Installing ory/hydra helm chart"
+helm install hydra ory/hydra \
+    ${install_flags} \
+    --version "${HYDRA_VERSION}" \
+    --kube-context "${BOOTSTRAP_CONTEXT}" \
+    --create-namespace --namespace "${HYDRA_NAMESPACE}" \
+    --set "hydra.config.dsn=${dsn}" \
+    --values "${script_dir}/values.yaml" \
+    --wait
+
+echo "Installed hydra"

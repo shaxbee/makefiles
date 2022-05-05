@@ -1,0 +1,14 @@
+#!/bin/bash
+
+HYDRA_DEBUG=${HYDRA_DEBUG:-false}
+
+if [[ ${HYDRA_DEBUG} != false ]]; then
+    set -x
+fi
+
+if [[ -z ${BOOTSTRAP_CONTEXT} ]]; then
+    echo "BOOTSTRAP_CONTEXT is required" >&2
+    exit 1;
+fi
+
+HYDRA_NAMESPACE=${HYDRA_NAMESPACE:-user}

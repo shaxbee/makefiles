@@ -1,0 +1,16 @@
+#!/bin/bash
+
+script_dir=$(dirname "$0")
+source ${script_dir}/setup
+
+helm -n ${HYDRA_NAMESPACE} status hydra &>/dev/null || exit_code=$?
+if [[ $exit_code -eq 0 ]]; then
+    echo "Uninstalling hydra release"
+    helm -n ${HYDRA_NAMESPACE} uninstall hydra \
+        --wait
+
+    echo "Uninstalled hydra release"
+fi
+
+echo "Cleaning hydra database"
+POSTGRES_DATABASES=hydra POSTGRES_NAMESPACE=${HYDRA_NAMESPACE} ${script_dir}/../postgres/clean

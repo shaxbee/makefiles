@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+POSTGRES_DEBUG=${POSTGRES_DEBUG:-false}
+
+if [[ ${POSTGRES_DEBUG} != false ]]; then
+    set -x
+fi
+
+KUBECTL=${KUBECTL:-kubectl}
+POSTGRES_NAMESPACE=${POSTGRES_NAMESPACE:-default}
+
+if [[ -z ${BOOTSTRAP_CONTEXT} || -z ${POSTGRES_DATABASES} ]]; then
+    echo "BOOTSTRAP_CONTEXT and POSTGRES_DATABASES are required" >&2
+    exit 1;
+fi
+
+kubectl="${KUBECTL} --context ${BOOTSTRAP_CONTEXT} --namespace ${POSTGRES_NAMESPACE}"
+
+function psql() {
+    local psql_flags="-v VERBOSITY=terse"
+    if [[ ${POSTGRES_DEBUG} != false ]]; then
+        psql_flags="-v VERBOSITY=verbose";
+    fi
+
+    ${kubectl} exec -i deployment/postgres -- \
+        psql -h localhost -U postgres ${psql_flags} -v ON_ERROR_STOP=1 "$@"
+}

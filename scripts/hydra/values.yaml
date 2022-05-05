@@ -1,0 +1,12 @@
+hydra:
+  autoMigrate: true
+  dangerousForceHttp: true
+  config:
+    urls:
+      self:
+        issuer: http://localhost/issuer
+      login: http://localhost/account
+      consent: http://localhost/consent
+    secrets:
+      system:
+        - deadbeefdeadbeef
