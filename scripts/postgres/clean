@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 script_dir=$(dirname "$0")
 source "${script_dir}/setup"
@@ -43,7 +43,7 @@ function delete_deployment() {
         return 0
     fi
 
-    ${kubectl} delete deployment/postgres
+    kubectl delete -k ${script_dir}/k8s
 }
 
 databases=(${POSTGRES_DATABASES//,/ })

@@ -1,16 +1,27 @@
-#!/bin/bash
+#!/bin/bash -e
 
 script_dir=$(dirname "$0")
 source ${script_dir}/setup
 
-helm -n ${HYDRA_NAMESPACE} status hydra &>/dev/null || exit_code=$?
-if [[ $exit_code -eq 0 ]]; then
+exit_code=0
+helm status hydra &>/dev/null || exit_code=$?
+if [[ $exit_code == 0 ]]; then
     echo "Uninstalling hydra release"
-    helm -n ${HYDRA_NAMESPACE} uninstall hydra \
+    helm uninstall hydra \
         --wait
-
-    echo "Uninstalled hydra release"
 fi
 
 echo "Cleaning hydra database"
-POSTGRES_DATABASES=hydra POSTGRES_NAMESPACE=${HYDRA_NAMESPACE} ${script_dir}/../postgres/clean
+POSTGRES_DATABASES=hydra \
+POSTGRES_NAMESPACE=${HYDRA_NAMESPACE} \
+${script_dir}/../postgres/clean
+
+exit_code=0
+helm status example-idp &>/dev/null || exit_code=$?
+if [[ $exit_code == 0 ]]; then
+    echo "Uninstalling example-idp release"
+    helm uninstall example-idp \
+        --wait
+fi
+
+kubectl delete -k ${script_dir}/${deployment_path}

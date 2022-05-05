@@ -1,0 +1,13 @@
+hydra:
+  autoMigrate: true
+  dangerousForceHttp: true
+  config:
+    urls:
+      self:
+        issuer: http://issuer.local.y42.dev
+      login: http://account.local.y42.dev/login
+      consent: http://account.local.y42.dev/consent
+      logout: http://account.local.y42.dev/logout
+    secrets:
+      system:
+        - deadbeefdeadbeef

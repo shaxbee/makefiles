@@ -35,7 +35,7 @@ bootstrap: bootstrap-kind
 clean-kind bootstrap-kind: export CLUSTER_NAME := $(KIND_CLUSTER_NAME)
 clean-kind bootstrap-kind: export K8S_VERSION := $(KIND_K8S_VERSION:v%=%)
 clean-kind bootstrap-kind: export HOST_PORT := $(KIND_HOST_PORT)
-bootstrap-contour bootstrap-hydra clean-hydra: export BOOTSTRAP_CONTEXT := $(BOOTSTRAP_CONTEXT)
+bootstrap-contour bootstrap-hydra clean-hydra clean-contour: export BOOTSTRAP_CONTEXT := $(BOOTSTRAP_CONTEXT)
 
 clean-kind: $(KIND) # Delete cluster
 	$(info $(_bullet) Cleaning <kind>)
@@ -48,6 +48,10 @@ bootstrap-kind: $(KUBECTL) $(KIND)
 bootstrap-contour: bootstrap-kind
 	$(info $(_bullet) Bootstraping <contour>)
 	$(dir $(_kind_mk_path))scripts/contour/bootstrap
+
+clean-contour:
+	$(info $(_bullet) Cleaning <contour>)
+	$(dir $(_kind_mk_path))scripts/contour/clean
 
 bootstrap-hydra: bootstrap-kind
 	$(info $(_bullet) Bootstrapping <hydra>)

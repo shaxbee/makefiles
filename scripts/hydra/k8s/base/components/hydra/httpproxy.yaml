@@ -1,0 +1,11 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: issuer
+spec:
+  virtualhost:
+    fqdn: issuer.local.y42.dev
+  routes:
+    - services:
+        - name: hydra-public
+          port: 4444

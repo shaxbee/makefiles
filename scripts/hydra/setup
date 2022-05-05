@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 HYDRA_DEBUG=${HYDRA_DEBUG:-false}
 
@@ -12,3 +12,17 @@ if [[ -z ${BOOTSTRAP_CONTEXT} ]]; then
 fi
 
 HYDRA_NAMESPACE=${HYDRA_NAMESPACE:-user}
+HYDRA_EXAMPLE_IDP=${HYDRA_EXAMPLE_IDP:-true}
+
+function helm() {
+    (command helm --kube-context ${BOOTSTRAP_CONTEXT} --namespace ${HYDRA_NAMESPACE} "$@")
+}
+
+function kubectl() {
+    (command kubectl --context ${BOOTSTRAP_CONTEXT} --namespace ${HYDRA_NAMESPACE} "$@")
+}
+
+deployment_path="k8s/base"
+if [[ $HYDRA_EXAMPLE_IDP == true ]]; then
+    deployment_path="k8s/overlays/with-example-idp"
+fi

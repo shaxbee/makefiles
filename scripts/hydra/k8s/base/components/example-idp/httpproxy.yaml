@@ -1,0 +1,11 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: account
+spec:
+  virtualhost:
+    fqdn: account.local.y42.dev
+  routes:
+    - services:
+        - name: example-idp
+          port: 3000

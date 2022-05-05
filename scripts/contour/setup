@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+CONTOUR_DEBUG=${CONTOUR_DEBUG:-false}
+
+if [[ ${CONTOUR_DEBUG} != false ]]; then
+    set -x
+fi
+
+if [[ -z ${BOOTSTRAP_CONTEXT} ]]; then
+    echo "BOOTSTRAP_CONTEXT is required" >&2
+    exit 1;
+fi
+
+CONTOUR_NAMESPACE=${CONTOUR_NAMESPACE:-ingress}
+
+function helm() {
+    (command helm --kube-context=${BOOTSTRAP_CONTEXT} --namespace=${CONTOUR_NAMESPACE} "$@")
+}

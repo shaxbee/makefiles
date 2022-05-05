@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+script_dir=$(dirname "$0")
+source ${script_dir}/setup
+
+exit_code=0
+helm status contour &>/dev/null || exit_code=$?
+if [[ $exit_code == 0 ]]; then
+    echo "Uninstalling contour release"
+    helm uninstall contour \
+        --wait
+fi

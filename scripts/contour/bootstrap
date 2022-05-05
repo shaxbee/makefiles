@@ -1,23 +1,14 @@
 #!/bin/bash -e
 
-CONTOUR_DEBUG=${CONTOUR_DEBUG:-false}
 
-if [[ ${CONTOUR_DEBUG} != false ]]; then
-    set -x
-fi
-
-SCRIPT_DIR=$(dirname "$0")
-
-if [[ -z ${BOOTSTRAP_CONTEXT} ]]; then
-    echo "BOOTSTRAP_CONTEXT is required" >&2
-    exit 1;
-fi
+script_dir=$(dirname "$0")
+source ${script_dir}/setup
 
 CONTOUR_VERSION=${CONTOUR_VERSION:-v7.8.0}
-CONTOUR_NAMESPACE=${CONTOUR_NAMESPACE:-ingress}
 
-helm -n ${CONTOUR_NAMESPACE} status contour &>/dev/null || exit_code=$?
-if [[ $exit_code -eq 0 ]]; then
+exit_code=0
+helm status contour &>/dev/null || exit_code=$?
+if [[ $exit_code == 0 ]]; then
     exit 0;
 fi
 
@@ -36,7 +27,7 @@ helm install contour bitnami/contour \
     --version "${CONTOUR_VERSION#v}" \
     --kube-context "${BOOTSTRAP_CONTEXT}" \
     --create-namespace --namespace "${CONTOUR_NAMESPACE}" \
-    --values "${SCRIPT_DIR}/values.yaml" \
+    --values "${script_dir}/values.yaml" \
     --wait
 
 echo "Installed bitnami/contour helm chart"

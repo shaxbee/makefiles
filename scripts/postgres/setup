@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/bash -e
 
 POSTGRES_DEBUG=${POSTGRES_DEBUG:-false}
 
@@ -7,7 +6,6 @@ if [[ ${POSTGRES_DEBUG} != false ]]; then
     set -x
 fi
 
-KUBECTL=${KUBECTL:-kubectl}
 POSTGRES_NAMESPACE=${POSTGRES_NAMESPACE:-default}
 
 if [[ -z ${BOOTSTRAP_CONTEXT} || -z ${POSTGRES_DATABASES} ]]; then
@@ -15,7 +13,9 @@ if [[ -z ${BOOTSTRAP_CONTEXT} || -z ${POSTGRES_DATABASES} ]]; then
     exit 1;
 fi
 
-kubectl="${KUBECTL} --context ${BOOTSTRAP_CONTEXT} --namespace ${POSTGRES_NAMESPACE}"
+function kubectl() {
+    (command kubectl --context ${BOOTSTRAP_CONTEXT} --namespace ${POSTGRES_NAMESPACE} "$@")
+}
 
 function psql() {
     local psql_flags="-v VERBOSITY=terse"
@@ -23,6 +23,6 @@ function psql() {
         psql_flags="-v VERBOSITY=verbose";
     fi
 
-    ${kubectl} exec -i deployment/postgres -- \
+    kubectl exec -i deployment/postgres -- \
         psql -h localhost -U postgres ${psql_flags} -v ON_ERROR_STOP=1 "$@"
 }
