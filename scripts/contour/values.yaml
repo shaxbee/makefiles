@@ -1,3 +1,12 @@
+contour:
+  image:
+    registry: ghcr.io
+    repository: projectcontour/contour
 envoy:
+  image:
+    registry: ghcr.io
+    repository: projectcontour/contour
   service:
     type: NodePort
+configInline:
+  leaderelection: null

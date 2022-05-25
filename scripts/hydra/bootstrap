@@ -3,7 +3,8 @@
 script_dir=$(dirname "$0")
 source ${script_dir}/setup
 
-HYDRA_VERSION=${HYDRA_VERSION:-v0.23.1}
+HYDRA_HELM_VERSION=${HYDRA_HELM_VERSION:-v0.23.2}
+HYDRA_VERSION=${HYDRA_VERSION:-v1.11.8}
 
 exit_code=0
 helm status hydra &>/dev/null || exit_code=$?
@@ -27,8 +28,9 @@ if [[ $exit_code != 0 ]]; then
     echo "Installing ory/hydra helm chart"
     helm install hydra ory/hydra \
         ${install_flags} \
-        --version "${HYDRA_VERSION}" \
+        --version "${HYDRA_HELM_VERSION}" \
         --create-namespace \
+        --set "image.tag=${HYDRA_VERSION}" \
         --set "hydra.config.dsn=${dsn}" \
         --values "${script_dir}/hydra-values.yaml" \
         --wait

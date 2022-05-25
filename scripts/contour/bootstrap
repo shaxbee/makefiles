@@ -4,7 +4,8 @@
 script_dir=$(dirname "$0")
 source ${script_dir}/setup
 
-CONTOUR_VERSION=${CONTOUR_VERSION:-v7.8.0}
+CONTOUR_HELM_VERSION=${CONTOUR_HELM_VERSION:-v7.9.2}
+CONTOUR_VERSION=${CONTOUR_VERSION:-v1.21.0}
 
 exit_code=0
 helm status contour &>/dev/null || exit_code=$?
@@ -24,9 +25,10 @@ fi
 echo "Installing bitnami/contour helm chart"
 helm install contour bitnami/contour \
     ${install_flags} \
-    --version "${CONTOUR_VERSION#v}" \
+    --version "${CONTOUR_HELM_VERSION#v}" \
     --kube-context "${BOOTSTRAP_CONTEXT}" \
     --create-namespace --namespace "${CONTOUR_NAMESPACE}" \
+    --set "contour.image.tag=${CONTOUR_VERSION}" \
     --values "${script_dir}/values.yaml" \
     --wait
 
