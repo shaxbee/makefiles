@@ -4,8 +4,8 @@ contour:
     repository: projectcontour/contour
 envoy:
   image:
-    registry: ghcr.io
-    repository: projectcontour/contour
+    registry: docker.io
+    repository: envoyproxy/envoy
   service:
     type: NodePort
 configInline:

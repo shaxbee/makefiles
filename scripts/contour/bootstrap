@@ -29,6 +29,7 @@ helm install contour bitnami/contour \
     --kube-context "${BOOTSTRAP_CONTEXT}" \
     --create-namespace --namespace "${CONTOUR_NAMESPACE}" \
     --set "contour.image.tag=${CONTOUR_VERSION}" \
+    --set "envoy.image.tag=${CONTOUR_VERSION}" \
     --values "${script_dir}/values.yaml" \
     --wait
 
