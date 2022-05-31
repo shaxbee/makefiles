@@ -10,6 +10,7 @@ if [[ "${GITHUB_ACTIONS}" == "true" ]]; then
 fi
 
 docker buildx build \
+    --ssh default \
     --tag "${IMAGE}" \
     --output "type=image,push=${PUSH_IMAGE}" \
     --progress plain \
