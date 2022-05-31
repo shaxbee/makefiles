@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+declare -a args=()
+if [[ ! -z "${PLATFORMS}" ]]; then
+    _args+=("--platform" "${PLATFORMS}");
+fi
+
+if [[ "${GITHUB_ACTIONS}" == "true" ]]; then
+    _args+=("--cache-from" "type=gha" "--cache-to" "type=gha,mode=max");
+fi
+
+docker buildx build \
+    --tag "${IMAGE}" \
+    --output "type=image,push=${PUSH_IMAGE}" \
+    --progress plain \
+    "${_args[@]}" \
+    ${BUILD_CONTEXT}
