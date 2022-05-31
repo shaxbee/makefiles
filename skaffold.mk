@@ -4,7 +4,7 @@ _include_skaffold_mk := 1
 include makefiles/shared.mk
 include makefiles/kubectl.mk
 
-SKAFFOLD_VERSION ?= 1.36.0
+SKAFFOLD_VERSION ?= 1.37.1
 SKAFFOLD_ROOT := $(BUILD)/skaffold-$(SKAFFOLD_VERSION)
 SKAFFOLD := $(SKAFFOLD_ROOT)/skaffold
 
