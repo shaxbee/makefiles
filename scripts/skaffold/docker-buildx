@@ -1,18 +1,53 @@
 #!/bin/bash -e
 
-declare -a args=()
+function docker {
+    >&2 echo "docker" "${@}"
+    command docker "${@}"
+}
+
+declare -a _build_args=(
+    '--ssh' 'default'
+    '--tag' "${IMAGE}"
+    '--output' "type=image,push=${PUSH_IMAGE}"
+    '--progress' 'plain'
+)
+
 if [[ ! -z "${PLATFORMS}" ]]; then
-    _args+=("--platform" "${PLATFORMS}");
+    if [[ -z "${DOCKER_BUILDKIT_BUILDER}" ]]; then
+        declare -a _create_args=(
+            '--platform' "${PLATFORMS}"
+        )
+
+        DOCKER_BUILDKIT_BUILDER=$(
+            docker buildx create \
+            --driver-opt network=host \
+            --platform "${PLATFORMS}"
+        )
+    fi
+
+    function delete_builder {
+        docker buildx rm --force ${DOCKER_BUILDKIT_BUILDER}
+    }
+
+    trap delete_builder EXIT
+
+    _build_args+=('--builder' "${DOCKER_BUILDKIT_BUILDER}" '--platform' "${PLATFORMS}");
 fi
 
 if [[ "${GITHUB_ACTIONS}" == "true" ]]; then
-    _args+=("--cache-from" "type=gha" "--cache-to" "type=gha,mode=max");
+    _build_args+=(
+        '--cache-from' 'type=gha'
+        '--cache-to' 'type=gha,mode=max'
+    );
+else
+    _docker_cache='/tmp/docker-cache'
+    mkdir -p ${_docker_cache}
+
+    _build_args+=(
+        '--cache-from' "type=local,src=${_docker_cache}"
+        '--cache-to' "type=local,dest=${_docker_cache},mode=max"
+    )
 fi
 
-docker buildx build \
-    --ssh default \
-    --tag "${IMAGE}" \
-    --output "type=image,push=${PUSH_IMAGE}" \
-    --progress plain \
-    "${_args[@]}" \
-    ${BUILD_CONTEXT}
+docker buildx build "${_build_args[@]}" ${BUILD_CONTEXT}
+
