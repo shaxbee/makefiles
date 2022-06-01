@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function docker {
-    >&2 echo "docker" "${@}"
+    >&2 echo "# docker" "${@}"
     command docker "${@}"
 }
 
@@ -12,26 +12,30 @@ declare -a _build_args=(
     '--progress' 'plain'
 )
 
-if [[ ! -z "${PLATFORMS}" ]]; then
-    if [[ -z "${DOCKER_BUILDKIT_BUILDER}" ]]; then
-        declare -a _create_args=(
-            '--platform' "${PLATFORMS}"
-        )
+if [[ -z "${DOCKER_BUILDKIT_BUILDER}" ]]; then
+    declare -a _create_args=(
+        '--driver-opt' 'network=host'
+    )
 
-        DOCKER_BUILDKIT_BUILDER=$(
-            docker buildx create \
-            --driver-opt network=host \
-            --platform "${PLATFORMS}"
+    if [[ ! -z "${PLATFORMS}" ]]; then
+        _create_args+=(
+            '--platform' "${PLATFORMS}"
         )
     fi
 
-    function delete_builder {
-        docker buildx rm --force ${DOCKER_BUILDKIT_BUILDER}
-    }
+    DOCKER_BUILDKIT_BUILDER=$(docker buildx create "${_create_args[@]}")
+fi
 
-    trap delete_builder EXIT
+_build_args+=('--builder' "${DOCKER_BUILDKIT_BUILDER}")
 
-    _build_args+=('--builder' "${DOCKER_BUILDKIT_BUILDER}" '--platform' "${PLATFORMS}");
+function delete_builder {
+    docker buildx rm --force "${DOCKER_BUILDKIT_BUILDER}"
+}
+
+trap delete_builder EXIT
+
+if [[ ! -z "${PLATFORMS}" ]]; then
+    _build_args+=('--platform' "${PLATFORMS}");
 fi
 
 if [[ "${GITHUB_ACTIONS}" == "true" ]]; then
