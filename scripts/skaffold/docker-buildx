@@ -26,7 +26,9 @@ if [[ -z "${DOCKER_BUILDKIT_BUILDER}" ]]; then
     DOCKER_BUILDKIT_BUILDER=$(docker buildx create "${_create_args[@]}")
 fi
 
-_build_args+=('--builder' "${DOCKER_BUILDKIT_BUILDER}")
+_build_args+=(
+    '--builder' "${DOCKER_BUILDKIT_BUILDER}"
+)
 
 function delete_builder {
     docker buildx rm --force "${DOCKER_BUILDKIT_BUILDER}"
