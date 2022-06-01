@@ -8,9 +8,14 @@ function docker {
 declare -a _build_args=(
     '--ssh' 'default'
     '--tag' "${IMAGE}"
-    '--output' "type=image,push=${PUSH_IMAGE}"
     '--progress' 'plain'
 )
+
+if [[ "${PUSH_IMAGE}" == "true" ]]; then
+    _build_args+=('--output' "type=image,push=${PUSH_IMAGE}")
+else
+    _build_args+=('--output' 'type=docker')
+fi
 
 if [[ -z "${DOCKER_BUILDKIT_BUILDER}" ]]; then
     declare -a _create_args=(
