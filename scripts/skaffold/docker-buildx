@@ -24,23 +24,24 @@ if [[ -z "${DOCKER_BUILDKIT_BUILDER}" ]]; then
     fi
 
     DOCKER_BUILDKIT_BUILDER=$(docker buildx create "${_create_args[@]}")
+
+    function delete_builder {
+        docker buildx rm --force "${DOCKER_BUILDKIT_BUILDER}"
+    }
+
+    trap delete_builder EXIT
 fi
 
 _build_args+=(
     '--builder' "${DOCKER_BUILDKIT_BUILDER}"
 )
 
-function delete_builder {
-    docker buildx rm --force "${DOCKER_BUILDKIT_BUILDER}"
-}
-
-trap delete_builder EXIT
-
 if [[ ! -z "${PLATFORMS}" ]]; then
     _build_args+=('--platform' "${PLATFORMS}");
 fi
 
-if [[ "${GITHUB_ACTIONS}" == "true" ]]; then
+if [[ "${ACTIONS_CACHE_URL}" != "" && "${ACTIONS_RUNTIME_TOKEN}" != "" ]]; then
+    echo "# github actions cache enabled"
     _build_args+=(
         '--cache-from' 'type=gha'
         '--cache-to' 'type=gha,mode=max'
