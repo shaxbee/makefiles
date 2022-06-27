@@ -4,6 +4,7 @@ _kind_mk_path := $(dir $(lastword $(MAKEFILE_LIST)))
 
 include makefiles/shared.mk
 include makefiles/kubectl.mk
+include makefiles/kustomize.mk
 
 KIND_VERSION ?= v0.11.1
 KIND_ROOT := $(BUILD)/kind-$(KIND_VERSION)
@@ -41,7 +42,7 @@ clean-kind: $(KIND) # Delete cluster
 	$(info $(_bullet) Cleaning <kind>)
 	$(dir $(_kind_mk_path))scripts/kind/clean
 
-bootstrap-kind: $(KUBECTL) $(KIND)
+bootstrap-kind: $(KUBECTL) $(KUSTOMIZE) $(KIND)
 	$(info $(_bullet) Bootstraping <kind>)
 	$(dir $(_kind_mk_path))scripts/kind/bootstrap
 
