@@ -4,7 +4,7 @@ _include_skaffold_mk := 1
 include makefiles/shared.mk
 include makefiles/kubectl.mk
 
-SKAFFOLD_VERSION ?= 1.32.0
+SKAFFOLD_VERSION ?= 1.39.1
 SKAFFOLD_ROOT := $(BUILD)/skaffold-$(SKAFFOLD_VERSION)
 SKAFFOLD := $(SKAFFOLD_ROOT)/skaffold
 
@@ -13,6 +13,7 @@ $(SKAFFOLD):
 	@mkdir -p $(SKAFFOLD_ROOT)
 	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-$(ARCH) -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
+	ln -sf $(subst $(BUILD)/,,$(SKAFFOLD)) $(BUILD)/skaffold
 
 deploy: deploy-skaffold
 

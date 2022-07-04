@@ -15,20 +15,19 @@ GOLANGCILINT_ROOT := $(BUILD)/golangci-lint-$(GOLANGCILINT_VERSION)
 GOLANGCILINT := $(GOLANGCILINT_ROOT)/golangci-lint
 GOLANGCILINT_CONCURRENCY ?= 16
 
-_go_modules = $(shell for file in `find . -type f -name go.mod`; do dirname $$file; done)
-
-$(GOFUMPT): export GOBIN = $(abspath $(GOFUMPT_ROOT))
+$(GOFUMPT) $(GOLANGCILINT): export GOBIN=$(abspath $(GOFUMPT_ROOT))
 
 $(GOFUMPT):
 	$(info $(_bullet) Installing <gofumpt>)
 	@mkdir -p $(GOFUMPT_ROOT)
 	$(GO) install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
-
-$(GOLANGCILINT): export GOBIN = $(abspath $(GOLANGCILINT_ROOT))
+	ln -sf $(subst $(BUILD)/,,$(GOFUMPT)) $(BUILD)/gofumpt
 
 $(GOLANGCILINT):
 	$(info $(_bullet) Installing <golangci-lint>)
-	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCILINT_VERSION)
+	@mkdir -p $(GOLANGCILINT_ROOT)
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOLANGCILINT_ROOT) $(GOLANGCILINT_VERSION)
+	ln -sf $(subst $(BUILD)/,,$(GOLANGCILINT)) $(BUILD)/golangci-lint
 
 clean: clean-go
 
@@ -52,22 +51,10 @@ clean-go: ## Clean Go
 	$(info $(_bullet) Cleaning <go>)
 	rm -rf vendor/
 
-# TODO: remove _go_modules hack when https://github.com/golang/go/issues/45713 is released
-
 deps-go: ## Tidy go dependencies
 	$(info $(_bullet) Tidy dependencies <go>)
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		$(GO) mod tidy && \
-		echo "go mod tidy ($${module})" && \
-		$(GO) mod download && \
-		echo "go mod download ($${module})" && \
-		cd - >/dev/null; \
-	done
-
-vendor-go: ## Vendor Go dependencies
-	$(info $(_bullet) Vendoring dependencies <go>)
-	$(GO) mod vendor
+	$(GO) mod tidy
+	$(GO) mod download
 
 format-go: $(GOFUMPT) ## Format Go code
 	$(info $(_bullet) Formatting code)
@@ -79,29 +66,14 @@ lint-go: $(GOLANGCILINT)
 
 test-go: ## Run Go tests
 	$(info $(_bullet) Running tests <go>)
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		echo "go test ./... ($${module})" && \
-		$(GO) test ./...; \
-		cd - >/dev/null; \
-	done
+	$(GO) test ./...
 	
 test-coverage-go: ## Run Go tests with coverage
 	$(info $(_bullet) Running tests with coverage <go>) 
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		echo "go test -cover ./... ($${module})" && \
-		$(GO) test -cover ./...; \
-		cd - >/dev/null; \
-	done
+	$(GO) test -cover ./...
 
 integration-test-go: ## Run Go integration tests
 	$(info $(_bullet) Running integration tests <go>) 
-	@for module in $(_go_modules); do \
-		cd $${module} && \
-		echo "go test -tags integration -count 1 ./... ($${module})" && \
-		$(GO) test -tags integration -count 1 ./...; \
-		cd - >/dev/null; \
-	done
+	$(GO) test -tags integration -count 1 ./...
 
 endif

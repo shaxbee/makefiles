@@ -9,11 +9,12 @@ ifeq ($(ARCH),x86_64)
 endif
 
 BUILD ?= build
+SHELL := env PATH=$(abspath $(BUILD)):$(shell echo $$PATH) /bin/bash
 
 $(BUILD):
 	@mkdir -p $(BUILD)
 
-.PHONY: help clean deps vendor generate format lint test test-coverage integration-test build bootrap deploy run dev debug
+.PHONY: help clean deps generate format lint test test-coverage integration-test build bootrap deploy run dev debug
 
 all: deps generate format lint test build
 
@@ -23,8 +24,6 @@ help: ## Help
 clean: clean-build ## Clean targets
 
 deps: ## Download dependencies
-
-vendor: ## Vendor dependencies
 
 generate: ## Generate code
 
