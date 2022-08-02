@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+MYSQL_DEBUG=${MYSQL_DEBUG:-false}
+
+if [[ ${MYSQL_DEBUG} != false ]]; then
+    set -x
+fi
+
+MYSQL_NAMESPACE=${MYSQL_NAMESPACE:-default}
+
+if [[ -z ${BOOTSTRAP_CONTEXT} || -z ${MYSQL_DATABASES} ]]; then
+    echo "BOOTSTRAP_CONTEXT and MYSQL_DATABASES are required" >&2
+    exit 1;
+fi
+
+function kubectl() {
+    (command kubectl --context ${BOOTSTRAP_CONTEXT} --namespace ${MYSQL_NAMESPACE} "$@")
+}
+
+function mysql() {
+    kubectl exec -i deployment/mysql -- \
+        mysql --user='root' --password='secret' --execute="$@"
+}

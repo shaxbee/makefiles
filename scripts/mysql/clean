@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+script_dir=$(dirname "$0")
+source "${script_dir}/setup"
+
+# if namespace or deployment does not exist exit
+exit_code=0
+kubectl get deployment/mysql &>/dev/null || exit_code=$?
+if [[ $exit_code != 0 ]]; then
+    exit 0;
+fi
+
+function drop_database() {
+    local database="${1}"
+    local user="${database}"
+
+    local drop_database_sql=$(cat \
+<<SQL
+    DROP DATABASE IF EXISTS \`${database}\`;
+    DROP USER IF EXISTS \`${user}\`;
+SQL
+    )
+
+    local mysql_output="/dev/null"
+    if [[ ${MYSQL_DEBUG} != false ]]; then
+        mysql_output="/dev/stdoud"
+    fi
+
+    local exit_code=0
+    echo "${drop_database_sql}" | mysql &>${mysql_output} || exit_code=$?
+    if [[ $exit_code != 0 ]]; then
+        echo "Failed to drop database ${database}" >&2
+        return $exit_code
+    fi
+
+    echo "Dropped database ${database}"
+}
+
+function delete_deployment() {
+    local output="$(mysql -t --csv -c "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME <> 'mysql' AND SCHEMA_NAME NOT LIKE 'template%';")"
+    if [[ -n "${output}" ]]; then
+        echo "Skipping deleting deployment/mysql due to databases(s): ${output}"
+        return 0
+    fi
+
+    kubectl delete -k ${script_dir}/k8s
+}
+
+databases=(${MYSQL_DATABASES//,/ })
+
+for database in "${databases[@]}"; do
+    drop_database "${database}"
+done
+
+delete_deployment
