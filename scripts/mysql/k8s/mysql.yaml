@@ -23,8 +23,8 @@ spec:
         - name: mysql
           image: mysql:8-oracle
           env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: secret
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "true"
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql

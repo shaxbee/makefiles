@@ -19,5 +19,5 @@ function kubectl() {
 
 function mysql() {
     kubectl exec -i deployment/mysql -- \
-        mysql --user='root' --password='secret' --execute="$@"
+        mysql --user='root' "$@"
 }

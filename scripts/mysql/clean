@@ -5,7 +5,7 @@ source "${script_dir}/setup"
 
 # if namespace or deployment does not exist exit
 exit_code=0
-kubectl get service/mysql &>/dev/null || exit_code=$?
+kubectl get deployment/mysql &>/dev/null || exit_code=$?
 if [[ $exit_code != 0 ]]; then
     exit 0;
 fi
@@ -23,7 +23,7 @@ SQL
 
     local mysql_output="/dev/null"
     if [[ ${MYSQL_DEBUG} != false ]]; then
-        mysql_output="/dev/stdoud"
+        mysql_output="/dev/stdout"
     fi
 
     local exit_code=0
@@ -37,9 +37,10 @@ SQL
 }
 
 function delete_deployment() {
-    local output="$(mysql -t --csv -c "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME <> 'mysql' AND SCHEMA_NAME NOT LIKE 'template%';")"
-    if [[ -n "${output}" ]]; then
-        echo "Skipping deleting service/mysql due to databases(s): ${output}"
+    local output="$(mysql --raw --batch -se "SELECT count(SCHEMA_NAME) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME NOT IN (\"information_schema\", \"sys\", \"performance_schema\", \"mysql\");")"
+
+    if [[ "${output}" > 0 ]]; then
+        echo "Skipping deleting deployment/mysql due to databases(s): ${output}"
         return 0
     fi
 
