@@ -1,5 +1,5 @@
-ifndef _include_proto_mk
-_include_proto_mk := 1
+ifndef _include_buf_mk
+_include_buf_mk := 1
 
 include makefiles/shared.mk
 include makefiles/go.mk
@@ -15,18 +15,18 @@ $(BUF):
 	tar -xzf - -C "$(BUF_ROOT)" --strip-components 1
 	ln -sf $(subst $(BUILD)/,,$(BUF)) $(BUILD)/buf
 
-.PHONY: generate generate-proto lint lint-proto
+.PHONY: generate generate-buf lint lint-buf
 
-generate: generate-proto
+generate: generate-buf
 
-generate-proto: $(BUF)
-	$(info $(_bullet) Generating <proto>)
-	$(BUF) generate
+generate-buf: $(BUF)
+	$(info $(_bullet) Generating <buf>)
+	buf generate
 
-lint: lint-proto
+lint: lint-buf
 
-lint-proto: $(BUF)
-	$(info $(_bullet) Linting <proto>)
-	$(BUF) lint
+lint-buf: $(BUF)
+	$(info $(_bullet) Linting <buf>)
+	buf lint
 
 endif
