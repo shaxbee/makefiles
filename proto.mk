@@ -3,7 +3,7 @@ _include_proto_mk := 1
 
 include makefiles/shared.mk
 
-BUF_VERSION ?= v1.4.0
+BUF_VERSION ?= v1.23.1
 BUF_ROOT := $(BUILD)/buf-$(BUF_VERSION)
 BUF := $(BUF_ROOT)/bin/buf
 
